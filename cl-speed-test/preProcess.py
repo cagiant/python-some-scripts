@@ -4,12 +4,14 @@ import re
 
 DATA_DIR = "data/"
 TIME_FORMAT = "%Y-%m-%d %H:%M"
-THE_DATE = "2023-08-05"
+THE_DATE = "2023-08-04"
 
 
 def get_file_list(name):
     name_and_file_dic = {
-        "唐其彪": ["download_speed_0805_唐其彪.csv", "download_speed_0807_唐其彪.csv"]
+        "唐其彪": ["download_speed_0805_唐其彪.csv", "download_speed_0807_唐其彪.csv"],
+        "陈玲": ["download_speed_cl.csv"],
+        "童烨彬": ["download_speed-0805-tyb.csv", "download_speed-0806-tyb.csv", "download_speed_tyb.csv"]
     }
     return name_and_file_dic.get(name, [])
 
@@ -33,17 +35,20 @@ def get_user_data(name_list):
 
 
 def retrieve_data(data, current_time):
-    #  data 的格式为 [time, value1, value2], 需要找到最接近 current_time 的值，然后返回 value2 去掉 Mbps 的部分， 没有的时候返回 0
+    #  data format: [time, value1, value2]
+    #  Find the value closest to current_time within the next 20 minutes,
+    #  return value2 without "Mbps", or 0 if not found
     nearest_time_diff = float('inf')
-    nearest_value=None
+    nearest_value = None
 
     for entry in data:
         entry_time = datetime.datetime.strptime(entry[0], TIME_FORMAT + ":%S")
         time_diff = abs((current_time - entry_time).total_seconds())
 
-        if time_diff < nearest_time_diff:
-            nearest_time_diff = time_diff
-            nearest_value = entry[2]
+        if 0 <= time_diff < 1200:  # Check within the next 20 minutes
+            if time_diff < nearest_time_diff:
+                nearest_time_diff = time_diff
+                nearest_value = entry[2]
 
     return float(re.sub(r'Mbps', '', nearest_value)) if nearest_value else 0
 
@@ -51,7 +56,7 @@ if __name__ == "__main__":
     # 生成时间列表，从00:00到23:40，以20分钟为间隔
     start_time = datetime.datetime.strptime(THE_DATE + " 00:00", "%Y-%m-%d %H:%M")
     end_time = datetime.datetime.strptime(THE_DATE + " 23:40", "%Y-%m-%d %H:%M")
-    name_list = ['唐其彪']
+    name_list = ['唐其彪', '陈玲', '童烨彬']
     data_dic = get_user_data(name_list)
 
     time_interval = datetime.timedelta(minutes=20)

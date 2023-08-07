@@ -83,7 +83,7 @@ def calculate_speed(data):
     return total_down_speed_kb
 
 def write_to_csv(download_speed):
-    with open('download_speed.csv', 'a', newline='') as file:
+    with open('download_speed_cl.csv', 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([time.strftime('%Y-%m-%d %H:%M:%S'), f'{download_speed:.2f}' + "Kbps", f'{(download_speed/1024):.2f}' + "Mbps"])
 

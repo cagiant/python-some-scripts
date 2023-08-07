@@ -11,7 +11,7 @@ def write_to_csv(file_path, timestamp, download_speed):
 def mock_download_speed(start_time):
     # 生成随机下载速度，范围在 0 Kbps 到 10000 Kbps 之间
     download_speed = random.uniform(0, 10000)
-    write_to_csv('download_speed.csv', start_time, download_speed)
+    write_to_csv('download_speed_cl.csv', start_time, download_speed)
 
 # 设定日期为 2023-08-06
 start_time = datetime(2023, 8, 6, 0, 0, 0)
